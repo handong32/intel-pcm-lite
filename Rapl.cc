@@ -14,11 +14,12 @@ rapl::RaplCounter::RaplCounter() {
   rapl_time_units = pow(0.5,(double)((res>>16)&0xf));
   rapl_dram_energy_units = rapl_cpu_energy_units;
 
-  printf("Rapl Power Units:\n");
+  /*printf("Rapl Power Units:\n");
   printf("\tPower units = %.6f W\n",rapl_power_units);
   printf("\tCPU Energy units = %.8f J\n",rapl_cpu_energy_units);
   printf("\tDRAM Energy units = %.8f J\n",rapl_dram_energy_units);
   printf("\tTime units = %.8f s\n",rapl_time_units);
+  */
 }
 
 void rapl::RaplCounter::Start() {

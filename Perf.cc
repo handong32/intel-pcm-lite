@@ -189,8 +189,8 @@ perf::PerfCounter::PerfCounter(perf::PerfEvent evt) : evt_{evt} {
       exit(127);
     }
     
-    printf("Perf fixed counter #%d initialized to evt=%u\n", pmc_num_,
-            static_cast<uint8_t>(evt_));
+    //printf("Perf fixed counter #%d initialized to evt=%u\n", pmc_num_,
+    //        static_cast<uint8_t>(evt_));
     return;
   }
 

@@ -8,6 +8,17 @@
 
 #include "Msr.h"
 
+inline static uint64_t rdtsc(void) {
+  uint64_t tsc;
+  asm volatile("rdtsc;"
+               "shl $32,%%rdx;"
+	       "or %%rdx,%%rax"
+               : "=a"(tsc)
+               :
+               : "%rcx", "%rdx");
+  return tsc;
+}
+
 namespace perf {
  
 /*

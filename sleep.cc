@@ -50,7 +50,17 @@ int main (int argc, char * argv[]) {
   
   uint64_t tsc_stop = rdtsc();
   uint64_t tsc_diff = tsc_stop - tsc_start;
-    
+
+  if (c3_start > c3_end) {
+    printf("c3_start (%lu) > c3_end (%lu)\n", c3_start, c3_end);
+  }
+  if (c6_start > c6_end) {
+    printf("c6_start (%lu) > c6_end (%lu)\n", c6_start, c6_end);
+  }
+  if (c7_start > c7_end) {
+    printf("c7_start (%lu) > c7_end (%lu)\n", c7_start, c7_end);
+  }
+  
   uint64_t CPU_CLK_C3 = c3_start > c3_end ? ((UINT64_MAX - c3_start) + c3_end) : (c3_end - c3_start);
   uint64_t CPU_CLK_C6 = c6_start > c6_end ? ((UINT64_MAX - c6_start) + c6_end) : (c6_end - c6_start);
   uint64_t CPU_CLK_C7 = c7_start > c7_end ? ((UINT64_MAX - c7_start) + c7_end) : (c7_end - c7_start);

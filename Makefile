@@ -13,6 +13,8 @@ INS2OBJS = ins2.o
 INS3OBJS = ins3.o
 INS4OBJS = ins4.o
 INS5OBJS = ins5.o
+INS6OBJS = ins6.o
+INS7OBJS = ins7.o
 
 main:	${OBJS}
 	${CXX} ${CFLAGS} -o $@ ${OBJS}
@@ -40,6 +42,19 @@ ins4:	${INS4OBJS} ${CCOBJS}
 
 ins5:	${INS5OBJS} ${CCOBJS}
 	${CXX} ${CFLAGS} -o $@ ${INS5OBJS} ${CCOBJS}
+
+ins6:	${INS6OBJS} ${CCOBJS}
+	${CXX} ${CFLAGS} -o $@ ${INS6OBJS} ${CCOBJS}
+
+ins7:	${INS7OBJS} ${CCOBJS}
+	${CXX} ${CFLAGS} -o $@ ${INS7OBJS} ${CCOBJS}
+
+workALU: workALU.S
+	g++ -c -DREPEAT_COUNT=2 -Wa,-adhln -g $< -o $@
+
+jon1:	jon1.o workALU.o ${CCOBJS}
+	${CXX} -g jon1.o workALU.o ${CCOBJS} -o $@
+#	${CXX} ${CFLAGS} -o $@ jon1.o workALU.o ${CCOBJS}
 
 clean:
 	rm -f *.o main cstate sleep ins1 ins2 ins3 ins4

@@ -7,14 +7,18 @@
 
 #include "Perf.h"
 #include "Rapl.h"
+#include "workALU.h"
 
 #define UINT32_MAXT 0xffffffff
 #define TIME_CONVERSION_khz 2899999*1000
+//extern int work(unsigned long long, unsigned long long, unsigned long long);
 
 int main (int argc, char * argv[]) {
   if (argc!=2) {printf("usage: main <iters> \n"); return -1;}
   uint32_t n = atoi(argv[1]);
   uint32_t j;
+  int ans, ii;
+  ans = work(42, 3, 0);
   
   std::unordered_map<std::string, perf::PerfCounter> counters;
   perf::PerfCounter ins_retired = perf::PerfCounter{perf::PerfEvent::fixed_instructions};
@@ -28,13 +32,9 @@ int main (int argc, char * argv[]) {
   rp.Start();
   
   uint64_t tsc_start = rdtsc();
-	
-  volatile uint64_t ans;
-  ans = 0;
-     
-  for(j=0;j<n;j++) {
-    std::this_thread::sleep_for(std::chrono::microseconds(1));
-    ans ++;
+
+  for(ii=0;ii<56;ii++) {
+    ans = work(42, 3, 0);
   }
   
   rp.Stop();        
@@ -52,7 +52,7 @@ int main (int argc, char * argv[]) {
   float tdiff = (tsc_diff/(float)TIME_CONVERSION_khz)/1000000.0;
   
   rp.Clear();
-  printf("%lu,%.3lf,%.3lf,%lu,%lu,%lu\n", ans, nrg, tdiff, ins, ref_cyc, llcm);
+  printf("%d,%.3lf,%.3lf,%lu,%lu,%lu\n", ans, nrg, tdiff, ins, ref_cyc, llcm);
   
   return 0; 
 }

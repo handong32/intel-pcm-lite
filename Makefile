@@ -1,66 +1,40 @@
-CXX = g++
-//CFLAGS = -O2 -Wall -g -pthread
-//CXFLAGS = -O4
-CFLAGS = -O4
+CXX=g++
+CFLAGS=-O4 -Wall
 
-OBJS = main.o Msr.o Cpuid.o Perf.o Rapl.o
-CCOBJS = Msr.o Cpuid.o Perf.o Rapl.o
-COBJS = cstate.o Msr.o Cpuid.o Perf.o Rapl.o
-SOBJS = sleep.o Msr.o Cpuid.o Perf.o Rapl.o
-BOBJS = busy.o
-INS1OBJS = ins1.o
-INS2OBJS = ins2.o
-INS3OBJS = ins3.o
-INS4OBJS = ins4.o
-INS5OBJS = ins5.o
-INS6OBJS = ins6.o
-INS7OBJS = ins7.o
+.PHONEY: clean all
 
-main:	${OBJS}
-	${CXX} ${CFLAGS} -o $@ ${OBJS}
+# SRC DIRECTORY
+SRC_DIR=src
+# SRC FILES  
+SRC_FILES=$(wildcard $(SRC_DIR)/*.cpp)
+# BUILD DIRECTORIES
+BUILD_DIR=build
+# HEADERS INCLUDE
+HEADER_DIR=include
 
-cstate:	${COBJS}
-	${CXX} ${CFLAGS} -o $@ ${COBJS}
+# Obj list, put them in build dir.    
+OBJS = $(patsubst src/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
-sleep:	${SOBJS}
-	${CXX} ${CFLAGS} -o $@ ${SOBJS}
+DYNAM_LIB=libintelpcmlite.so
+STATIC_LIB=libintelpcmlite.a
 
-busy:	${BOBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${BOBJS} ${CCOBJS}
+all: $(DYNAM_LIB)
 
-ins1:	${INS1OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS1OBJS} ${CCOBJS}
+$(DYNAM_LIB): build
+	$(CXX) $(CFLAGS) -shared -fPIC -I $(HEADER_DIR) $(SRC_FILES) -o $(BUILD_DIR)/$@
 
-ins2:	${INS2OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS2OBJS} ${CCOBJS}
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp build
+	$(CXX) $(CFLAGS) -c $< -o $@ -I $(HEADER_DIR)
 
-ins3:	${INS3OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS3OBJS} ${CCOBJS}
+$(BUILD_DIR)/$(STATIC_LIB): $(OBJS)
+	ar rcs $@ $^
 
-ins4:	${INS4OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS4OBJS} ${CCOBJS}
-
-ins5:	${INS5OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS5OBJS} ${CCOBJS}
-
-ins6:	${INS6OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS6OBJS} ${CCOBJS}
-
-ins7:	${INS7OBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o $@ ${INS7OBJS} ${CCOBJS}
-
-workALU: workALU.S
-	g++ -c -DREPEAT_COUNT=2 -Wa,-adhln -g $< -o $@
-
-jon1:	jon1.o workALU.o ${CCOBJS}
-	${CXX} -g jon1.o workALU.o ${CCOBJS} -o $@
-#	${CXX} ${CFLAGS} -o $@ jon1.o workALU.o ${CCOBJS}
+build:
+	mkdir -p $(BUILD_DIR)
 
 clean:
-	rm -f *.o main cstate sleep ins1 ins2 ins3 ins4
+	rm -rf $(BUILD_DIR)
 
-.cc.o:
-	${CXX} ${CFLAGS} -c $<
 
 
 

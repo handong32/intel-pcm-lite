@@ -18,7 +18,7 @@ OBJS = $(patsubst src/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DYNAM_LIB=libintelpcmlite.so
 STATIC_LIB=libintelpcmlite.a
 
-all: $(DYNAM_LIB)
+all: $(BUILD_DIR)/$(DYNAM_LIB) $(BUILD_DIR)/$(STATIC_LIB)
 
 $(DYNAM_LIB): build
 	$(CXX) $(CFLAGS) -shared -fPIC -I $(HEADER_DIR) $(SRC_FILES) -o $(BUILD_DIR)/$@

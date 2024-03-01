@@ -5,7 +5,6 @@ rapl::RaplCounter::RaplCounter() {
   uint64_t res;
     
   fd = open_msr(sched_getcpu());
-  //res = ebbrt::msr::Read(kMsrIntelRaplPowerUnit);
   res = read_msr(fd, kMsrIntelRaplPowerUnit);
   close(fd);
   
@@ -25,32 +24,48 @@ rapl::RaplCounter::RaplCounter() {
 void rapl::RaplCounter::Start() {
   int fd;
   uint64_t res;
-    
+
+  // CPU package energy
   fd = open_msr(sched_getcpu());
-  //uint64_t res = ebbrt::msr::Read(kMsrIntelPkgEnergyStatus);
   res = read_msr(fd, kMsrIntelPkgEnergyStatus);
-  close(fd);
-  
-  counter_offset = (double)res*rapl_cpu_energy_units;
+  close(fd);  
+  pkg_counter_offset = (double)res*rapl_cpu_energy_units;
+
+  fd = open_msr(sched_getcpu());
+  res = read_msr(fd, kMsrDramEnergyStatus);
+  close(fd);  
+  dram_counter_offset = (double)res*rapl_dram_energy_units;
 }
 
 void rapl::RaplCounter::Stop() {
   int fd;
   uint64_t res;
-
+  double after1, after2;
+  
+  // CPU package energy
   fd = open_msr(sched_getcpu());
-  //res = ebbrt::msr::Read(kMsrIntelPkgEnergyStatus);
   res = read_msr(fd, kMsrIntelPkgEnergyStatus);
   close(fd);
+  after1 = (double)res*rapl_cpu_energy_units;
+  pkg_counter_offset = after1 - pkg_counter_offset;
 
-  double after = (double)res*rapl_cpu_energy_units;
-  counter_offset = after - counter_offset;
+  // DRAM package energy
+  fd = open_msr(sched_getcpu());
+  res = read_msr(fd, kMsrDramEnergyStatus);
+  close(fd);
+  after2 = (double)res*rapl_dram_energy_units;
+  dram_counter_offset = after2 - dram_counter_offset;
 }
 
 void rapl::RaplCounter::Clear() {
-  counter_offset = 0.0;
+  pkg_counter_offset = 0.0;
+  dram_counter_offset = 0.0;
 }
 
-double rapl::RaplCounter::Read() {
-  return counter_offset;
+double rapl::RaplCounter::ReadPkg() {
+  return pkg_counter_offset;
+}
+
+double rapl::RaplCounter::ReadDram() {
+  return dram_counter_offset;
 }

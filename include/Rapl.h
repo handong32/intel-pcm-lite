@@ -134,14 +134,16 @@ namespace rapl {
 	     (result & (1LL<<48)) ? "clamped" : "not_clamped");
     }
     */
-    double Read();
+    double ReadPkg();
+    double ReadDram();
     
   private:
     double rapl_power_units{0.0};
     double rapl_cpu_energy_units{0.0};
     double rapl_time_units{0.0};
     double rapl_dram_energy_units{0.0};
-    double counter_offset{0.0};
+    double pkg_counter_offset{0.0};
+    double dram_counter_offset{0.0};
   };
   
 }  // namespace rapl
